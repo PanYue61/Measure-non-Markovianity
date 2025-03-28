@@ -26,7 +26,7 @@ def compute_traceDistance(p0,p1,p2,p3,q):
         [ii, 0, 0, kk, 0, 0, 0, 0, 0, 0, 0, 0, kk, 0, 0, qq],
         [0, jj, ll, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, mm, nn, 0],
         [0, ll, jj, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, nn, mm, 0],
-        [kk, 0, 0, ll, 0, 0, 0, 0, 0, 0, 0, 0, qq, 0, 0, kk],
+        [kk, 0, 0, ii, 0, 0, 0, 0, 0, 0, 0, 0, qq, 0, 0, kk],
         [0, 0, 0, 0, jj, 0, 0, mm, ll, 0, 0, nn, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, oo, pp, 0, 0, pp, rr, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, pp, oo, 0, 0, rr, pp, 0, 0, 0, 0, 0],
@@ -45,36 +45,36 @@ def compute_traceDistance(p0,p1,p2,p3,q):
     return 0.5*np.trace(sqrtM)
 
 
-st.title("BLP measurement vs p0")
+st.title("a BLP Measurement")
 with st.container():
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         q = st.number_input("q", 0.0, 1.0, 0.5, step=0.01)
     with c2:
-        p1 = st.number_input("p1", 0.0, 200.0, 30.0, step=0.1)
+        p1 = st.number_input("p1", 0.0, 1.0, 0.3, step=0.1)
     with c3:
-        p2 = st.number_input("p2", 0.0, 200.0, 45.0, step=0.1)
+        p2 = st.number_input("p2", 0.0, 1.0, 0.45, step=0.1)
     with c4:
-        p3 = st.number_input("p3", 0.0, 200.0, 35.0, step=0.1)
+        p3 = st.number_input("p3", 0.0, 1.0, 0.35, step=0.1)
 
 col_a, col_b = st.columns([1, 3])
 with col_a:
-    if st.button("🔄 清空历史曲线"):
+    if st.button("清空历史曲线"):
         st.session_state.curves = []
 with col_b:
-    keep = st.checkbox("✅ 保留当前曲线", value=False)
+    keep = st.checkbox("保留当前曲线", value=False)
 
 c5, c6, c7, c8 = st.columns(4)
 with c5:
-    x_min = st.number_input("x_min", value=0.0)
+    x_min = st.number_input("x_min", value=0.0, step=1.0)
 with c6:
-    x_max = st.number_input("x_max", value=200.0)
+    x_max = st.number_input("x_max", value=10.0, step=1.0)
 with c7:
-    y_min = st.number_input("y_min", value=0.0)
+    y_min = st.number_input("y_min", value=0.0, step=0.5)
 with c8:
-    y_max = st.number_input("y_max", value=2.0)
+    y_max = st.number_input("y_max", value=3.5, step=0.5)
 
-p0s = np.linspace(1, 200, 500)
+p0s = np.linspace(0, 10, 500)
 ys = [compute_traceDistance(p0, p1, p2, p3, q) for p0 in p0s]
 if keep:
     st.session_state.curves.append((p0s, ys, f"q={q}, p1={p1}, p2={p2}, p3={p3}"))
@@ -88,10 +88,8 @@ ax.plot(p0s, ys, label="Current Curve")
 for curve in st.session_state.curves:
     ax.plot(curve[0], curve[1], linestyle='--', label=curve[2])
 
-ax.set_xlim(1, 200)
-ax.set_ylim(0, 2)
 ax.set_xlabel("p0")
-ax.set_ylabel("BLP Measurement")
+ax.set_ylabel("0.5Tr")
 ax.set_title("Trace Distance vs p0")
 ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=8)
 fig.subplots_adjust(right=0.75)
